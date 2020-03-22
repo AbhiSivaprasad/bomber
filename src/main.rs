@@ -2,8 +2,9 @@ use warp::Filter;
 
 #[tokio::main]
 async fn main() {
-    // GET /hello/warp => 200 OK with body "Hello, warp!"
-    let hello = warp::path!("hello" / String).map(|name| format!("Hello, {}!", name));
+    let route = warp::get()
+        .and(warp::path::end())
+        .and(warp::fs::file("./static/index.html"));
 
-    warp::serve(hello).run(([127, 0, 0, 1], 3030)).await;
+    warp::serve(route).run(([127, 0, 0, 1], 3030)).await;
 }
