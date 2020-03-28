@@ -3,15 +3,17 @@ use std::sync::Arc;
 use warp::Filter;
 
 mod api;
+mod consts;
 mod user;
 
 use api::*;
+use consts::{MONGODB_DB, MONGODB_URL};
 
 #[tokio::main]
 async fn main() {
-    let client_options = ClientOptions::parse("mongodb://localhost:27017").unwrap();
+    let client_options = ClientOptions::parse(MONGODB_URL).unwrap();
     let client = Client::with_options(client_options).unwrap();
-    let db = Arc::new(client.database("mvp"));
+    let db = Arc::new(client.database(MONGODB_DB));
     let db = warp::any().map(move || Arc::clone(&db));
 
     // /GET / serves index.html

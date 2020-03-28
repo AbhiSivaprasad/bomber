@@ -1,3 +1,4 @@
+use crate::consts::MONGODB_USERS_COLLECTION;
 use argon2::{self, Config};
 use bson::{doc, oid::ObjectId};
 use failure::Fail;
@@ -36,7 +37,7 @@ impl User {
     }
 
     fn load(db: &Database, username: &str) -> Result<User> {
-        let collection = db.collection("users");
+        let collection = db.collection(MONGODB_USERS_COLLECTION);
         let filter = doc! { "username": username };
         let document = collection
             .find_one(filter, None)
@@ -57,7 +58,7 @@ impl User {
     }
 
     pub fn save(&self, db: &Database) -> Result<()> {
-        let collection = db.collection("users");
+        let collection = db.collection(MONGODB_USERS_COLLECTION);
         let serialized = bson::to_bson(self).map_err(|_| UserError::Other)?;
         if let bson::Bson::Document(document) = serialized {
             collection
@@ -70,7 +71,7 @@ impl User {
     }
 
     pub fn delete(&self, db: &Database) -> Result<()> {
-        let collection = db.collection("users");
+        let collection = db.collection(MONGODB_USERS_COLLECTION);
         let filter = doc! { "_id": &self.id };
         let result = collection
             .delete_one(filter, None)
