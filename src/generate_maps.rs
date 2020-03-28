@@ -1,6 +1,3 @@
-extern crate rand;
-
-// use warp::Filter;
 use rand::Rng;
 
 #[derive(Debug)]
@@ -14,9 +11,11 @@ impl PartialEq for Point {
     }
 }
 
-// returns the euclidean distance between two points
-fn dist(p1: &Point, p2: &Point) -> f32 {
-    (((p1.x - p2.x)^2 + (p1.y - p2.y)^2).abs() as f32).sqrt()
+impl Point {
+    // returns the euclidean distance between two points
+    fn dist(&self, p2: &Point) -> f32 {
+      return (((self.x - p2.x)^2 + (self.y - p2.y)^2).abs() as f32).sqrt()
+    }
 }
 
 fn generate_player_starts(board_size: i32, num_players: i32) -> Vec<Point> {
@@ -31,8 +30,8 @@ fn generate_player_starts(board_size: i32, num_players: i32) -> Vec<Point> {
 
         // will place players more than 3 squares away from each other
         for other_player_start in &player_starts {
-            if dist(other_player_start, &player_start) <= 3.0 {
-                continue
+            if (&player_start).dist(other_player_start) <= 3.0 {
+                continue;
             }
         }
 
@@ -128,7 +127,7 @@ fn is_valid_pos(pos: &Point, board_size: i32) -> bool {
 // tune board size
 // tune number of minions
 
-fn generate() {
+pub fn generate() {
     let num_players = 2;
     let _num_minions = 3; // per player
     let obstacle_percentage = 0.08;

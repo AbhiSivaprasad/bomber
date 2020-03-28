@@ -4,6 +4,7 @@ use warp::Filter;
 
 mod api;
 mod user;
+mod generate_maps;
 
 use api::*;
 
@@ -12,6 +13,9 @@ const DATABASE: &str = "mvp";
 
 #[tokio::main]
 async fn main() {
+    // prints initial map data
+    generate_maps::generate();
+
     let client_options = ClientOptions::parse(MONGODB_URL).unwrap();
     let client = Client::with_options(client_options).unwrap();
     let db = Arc::new(client.database(DATABASE));
