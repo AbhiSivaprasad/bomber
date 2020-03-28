@@ -43,8 +43,8 @@ impl User {
         let document = collection
             .find_one(filter, None)
             .map_err(|_| UserError::DB)?;
-        if let None = document {
-            Err(UserError::NotFound)?;
+        if document.is_none() {
+            return Err(UserError::NotFound);
         }
         Ok(bson::from_bson(bson::Bson::Document(document.unwrap()))
             .map_err(|_| UserError::Other)?)
@@ -53,7 +53,7 @@ impl User {
     pub fn login(db: &Database, username: &str, password: &str) -> Result<User> {
         let user = Self::load(db, username)?;
         if !verify(password, &user.password) {
-            Err(UserError::NotFound)?;
+            return Err(UserError::NotFound);
         }
         Ok(user)
     }
@@ -66,7 +66,7 @@ impl User {
                 .insert_one(document, None)
                 .map_err(|_| UserError::DB)?;
         } else {
-            Err(UserError::Other)?;
+            return Err(UserError::Other);
         }
         Ok(())
     }
@@ -78,7 +78,7 @@ impl User {
             .delete_one(filter, None)
             .map_err(|_| UserError::DB)?;
         if result.deleted_count == 0 {
-            Err(UserError::NotFound)?;
+            return Err(UserError::NotFound);
         }
         Ok(())
     }
