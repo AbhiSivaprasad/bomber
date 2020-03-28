@@ -1,5 +1,6 @@
 import * as React from "react";
 import {Game} from "./Game";
+import {PlayerObject} from "./types";
 
 const SERVER_URL = "";
 
@@ -9,6 +10,15 @@ export class GameManager extends React.Component<GameManagerProps, GameManagerSt
     constructor(props: GameManagerProps) {
         super(props);
         this.ws = new WebSocket(SERVER_URL);
+
+        // initialize to empty state with no players
+        this.state = {
+            terrain: null,
+            generals: [],
+            mines: [],
+            minions: [],
+            bullets: [],
+        };
     }
 
     render() {
@@ -22,16 +32,7 @@ export class GameManager extends React.Component<GameManagerProps, GameManagerSt
 
         this.ws.onmessage = (event) => {
             console.log(`Data received from server: ${event.data}`);
-            const message = JSON.parse(event.data);
-
-            switch(message.type) {
-                case 'map':
-                    break;
-                case 'patch':
-                    break;
-                default:
-                    break;
-            }
+            this.setState(JSON.parse(event.data))
         };
 
         this.ws.onclose = (event) => {
@@ -47,11 +48,18 @@ export class GameManager extends React.Component<GameManagerProps, GameManagerSt
         this.ws.onerror = (event) => {
             console.error(`[error] ${event}`);
         };
-
     }
 }
 
-export interface GameManagerState {}
+export interface GameManagerState {
+    terrain: number[][];
+
+    // objects attached to a player and location
+    generals: PlayerObject[];
+    mines: PlayerObject[];
+    minions: PlayerObject[];
+    bullets: PlayerObject[];
+}
 
 export interface GameManagerProps {}
 
