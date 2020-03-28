@@ -1,6 +1,8 @@
 use mongodb::{options::ClientOptions, Client};
 use warp::Filter;
 
+mod user;
+
 #[tokio::main]
 async fn main() {
     let client_options = ClientOptions::parse("mongodb://localhost:27017").unwrap();

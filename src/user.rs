@@ -1,8 +1,9 @@
+use argon2::{self, Config};
 use bson::{doc, oid::ObjectId};
 use failure::Fail;
 use mongodb::Database;
+use rand::Rng;
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
 
 #[derive(Debug, Fail)]
 pub enum UserError {
@@ -25,12 +26,13 @@ pub struct User {
 }
 
 fn hash(password: &str) -> String {
-    Sha256::new()
-        .chain(password)
-        .result()
-        .iter()
-        .map(|x| format!("{:x?}", x))
-        .collect()
+    let salt: [u8; 32] = rand::thread_rng().gen();
+    let config = Config::default();
+    argon2::hash_encoded(password.as_bytes(), &salt, &config).unwrap()
+}
+
+fn verify(password: &str, hash: &str) -> bool {
+    argon2::verify_encoded(hash, password.as_bytes()).unwrap_or(false)
 }
 
 impl User {
@@ -43,7 +45,7 @@ impl User {
         })
     }
 
-    pub fn load(db: &Database, username: &str) -> Result<User> {
+    fn load(db: &Database, username: &str) -> Result<User> {
         let collection = db.collection("users");
         let filter = doc! { "username": username };
         let document = collection
@@ -57,17 +59,11 @@ impl User {
     }
 
     pub fn login(db: &Database, username: &str, password: &str) -> Result<User> {
-        let hash = hash(password);
-        let collection = db.collection("users");
-        let filter = doc! { "username": username, "password": hash };
-        let document = collection
-            .find_one(filter, None)
-            .map_err(|_| UserError::DB)?;
-        if let None = document {
+        let user = Self::load(db, username)?;
+        if !verify(password, &user.password) {
             Err(UserError::NotFound)?;
         }
-        Ok(bson::from_bson(bson::Bson::Document(document.unwrap()))
-            .map_err(|_| UserError::Other)?)
+        Ok(user)
     }
 
     pub fn save(&self, db: &Database) -> Result<()> {
@@ -85,7 +81,7 @@ impl User {
 
     pub fn delete(&self, db: &Database) -> Result<()> {
         let collection = db.collection("users");
-        let filter = doc! { "_id": self.id };
+        let filter = doc! { "_id": &self.id };
         let result = collection
             .delete_one(filter, None)
             .map_err(|_| UserError::DB)?;
