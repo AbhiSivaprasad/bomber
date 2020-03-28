@@ -1,10 +1,11 @@
-use crate::consts::MONGODB_USERS_COLLECTION;
 use argon2::{self, Config};
 use bson::{doc, oid::ObjectId};
 use failure::Fail;
 use mongodb::Database;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+
+const USERS_COLLECTION: &str = "users";
 
 #[derive(Debug, Fail)]
 pub enum UserError {
@@ -37,7 +38,7 @@ impl User {
     }
 
     fn load(db: &Database, username: &str) -> Result<User> {
-        let collection = db.collection(MONGODB_USERS_COLLECTION);
+        let collection = db.collection(USERS_COLLECTION);
         let filter = doc! { "username": username };
         let document = collection
             .find_one(filter, None)
@@ -58,7 +59,7 @@ impl User {
     }
 
     pub fn save(&self, db: &Database) -> Result<()> {
-        let collection = db.collection(MONGODB_USERS_COLLECTION);
+        let collection = db.collection(USERS_COLLECTION);
         let serialized = bson::to_bson(self).map_err(|_| UserError::Other)?;
         if let bson::Bson::Document(document) = serialized {
             collection
@@ -71,7 +72,7 @@ impl User {
     }
 
     pub fn delete(&self, db: &Database) -> Result<()> {
-        let collection = db.collection(MONGODB_USERS_COLLECTION);
+        let collection = db.collection(USERS_COLLECTION);
         let filter = doc! { "_id": &self.id };
         let result = collection
             .delete_one(filter, None)
