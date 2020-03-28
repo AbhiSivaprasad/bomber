@@ -20,7 +20,7 @@ pub async fn register(
         Ok(user) => user,
         _ => return Ok(StatusCode::INTERNAL_SERVER_ERROR),
     };
-    if let Err(_) = user.save(&db) {
+    if user.save(&db).is_err() {
         return Ok(StatusCode::INTERNAL_SERVER_ERROR);
     }
     Ok(StatusCode::OK)
