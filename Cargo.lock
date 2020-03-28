@@ -117,7 +117,10 @@ name = "bomber"
 version = "0.1.0"
 dependencies = [
  "bson",
+ "failure",
  "mongodb",
+ "serde",
+ "sha2",
  "tokio",
  "warp",
 ]
@@ -270,6 +273,28 @@ dependencies = [
  "proc-macro2 1.0.9",
  "quote 1.0.3",
  "rustversion",
+ "syn 1.0.17",
+ "synstructure",
+]
+
+[[package]]
+name = "failure"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8529c2421efa3066a5cbd8063d2244603824daccb6936b079010bb2aa89464b"
+dependencies = [
+ "backtrace",
+ "failure_derive",
+]
+
+[[package]]
+name = "failure_derive"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "030a733c8287d6213886dd487564ff5c8f6aae10278b3588ed177f9d18f8d231"
+dependencies = [
+ "proc-macro2 1.0.9",
+ "quote 1.0.3",
  "syn 1.0.17",
  "synstructure",
 ]

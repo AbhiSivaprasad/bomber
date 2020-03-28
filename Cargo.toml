@@ -8,6 +8,9 @@ edition = "2018"
 
 [dependencies]
 bson = "0.14"
+failure = "0.1"
 mongodb = "0.9"
+serde = "1.0"
+sha2 = "0.8"
 tokio = { version = "0.2", features = ["macros"] }
 warp = "0.2"
