@@ -1,6 +1,5 @@
 import * as React from "react";
-import {Game} from "./Game";
-import {PlayerObject} from "./types";
+import {Game, GameState} from "./Game";
 
 const SERVER_URL = "";
 
@@ -13,7 +12,7 @@ export class GameManager extends React.Component<GameManagerProps, GameManagerSt
 
         // initialize to empty state with no players
         this.state = {
-            terrain: null,
+            terrain: [],
             generals: [],
             mines: [],
             minions: [],
@@ -32,6 +31,7 @@ export class GameManager extends React.Component<GameManagerProps, GameManagerSt
 
         this.ws.onmessage = (event) => {
             console.log(`Data received from server: ${event.data}`);
+            // TODO: parse terrain correctly
             this.setState(JSON.parse(event.data))
         };
 
@@ -52,13 +52,8 @@ export class GameManager extends React.Component<GameManagerProps, GameManagerSt
 }
 
 export interface GameManagerState {
-    terrain: number[][];
-
+    gameState: GameState,
     // objects attached to a player and location
-    generals: PlayerObject[];
-    mines: PlayerObject[];
-    minions: PlayerObject[];
-    bullets: PlayerObject[];
 }
 
 export interface GameManagerProps {}

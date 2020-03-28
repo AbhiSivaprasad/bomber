@@ -1,4 +1,5 @@
 import * as React from "react";
+import {PlayerObject} from "./types";
 
 const BOARD_HEIGHT = 400;
 const BOARD_WIDTH = 400;
@@ -45,6 +46,14 @@ export class Game extends React.Component<GameProps, {}> {
         context.strokeStyle = "black";
         context.stroke();
     }
+}
+
+export interface GameState {
+    generals: PlayerObject[];
+    mines: PlayerObject[];
+    minions: PlayerObject[];
+    bullets: PlayerObject[];
+    terrain: number[][];
 }
 
 export interface GameProps { }
