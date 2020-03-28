@@ -25,16 +25,6 @@ pub struct User {
     password: String,
 }
 
-fn hash(password: &str) -> String {
-    let salt: [u8; 32] = rand::thread_rng().gen();
-    let config = Config::default();
-    argon2::hash_encoded(password.as_bytes(), &salt, &config).unwrap()
-}
-
-fn verify(password: &str, hash: &str) -> bool {
-    argon2::verify_encoded(hash, password.as_bytes()).unwrap_or(false)
-}
-
 impl User {
     pub fn new(username: &str, password: &str) -> Result<User> {
         let hash = hash(password);
@@ -95,4 +85,14 @@ impl User {
         let hash = hash(password);
         self.password = hash;
     }
+}
+
+fn hash(password: &str) -> String {
+    let salt: [u8; 32] = rand::thread_rng().gen();
+    let config = Config::default();
+    argon2::hash_encoded(password.as_bytes(), &salt, &config).unwrap()
+}
+
+fn verify(password: &str, hash: &str) -> bool {
+    argon2::verify_encoded(hash, password.as_bytes()).unwrap_or(false)
 }
