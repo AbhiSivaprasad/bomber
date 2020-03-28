@@ -12,8 +12,10 @@ socket.onmessage = function(event) {
 
     switch(message.type) {
         case 'map':
+            window.Board.initialize(message.data);
             break;
         case 'patch':
+            window.Board.patch(message.data);
             break;
         default:
             break;
