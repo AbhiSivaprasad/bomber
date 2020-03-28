@@ -1,1 +1,0 @@
-var BOARD_HEIGHT = 400;
