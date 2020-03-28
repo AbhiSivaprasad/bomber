@@ -15,4 +15,3 @@ rust-argon2 = "0.8"
 serde = "1.0"
 tokio = { version = "0.2", features = ["macros"] }
 warp = "0.2"
-rand = "0.7.3"
