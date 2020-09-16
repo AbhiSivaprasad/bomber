@@ -12,7 +12,7 @@ export class GameManager extends React.Component<GameManagerProps, GameManagerSt
 
         // initialize to empty state with no players
         this.state = {
-            terrain: [],
+            terrain: [[0]],
             generals: [],
             mines: [],
             minions: [],
